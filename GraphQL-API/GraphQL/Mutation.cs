@@ -7,35 +7,101 @@ namespace GraphQL_API.GraphQL
 {
     public class Mutation
     {
-        public Customer AddCustomer([Service] ICustomerRepository _customerRepository, string name, string email,
-            int? code, DateTime createdAt, bool isBlocked)
+        //User
+        public User AddUser([Service] IUser _userService, string first, string last, string email)
         {
-            var customer = new Customer
-                {Name = name, Email = email, Code = code, CreatedAt = createdAt, IsBlocked = isBlocked};
-            _customerRepository.Add(customer);
-            return customer;
+            var user = new User
+            {
+                FirstName = first,
+                LastName = last,
+                Email = email,
+                CreatedDateTime = DateTime.Now,
+            };
+            _userService.Add(user);
+            return user;
         }
 
-        public Customer UpdateCustomer([Service] ICustomerRepository _customerRepository, int id, string? name,
-            string? email, int? code, DateTime? createdAt, bool? isBlocked)
+        public User UpdateUser([Service] IUser _userService, int id, string? first, string? last, string? email)
         {
-            var customerToUpdate = _customerRepository.GetById(id);
-            if (customerToUpdate == null) throw new ArgumentException("Customer not found @ id", nameof(id));
-            if (name != null) customerToUpdate.Name = name;
-            if (email != null) customerToUpdate.Email = email;
-            if (code != null) customerToUpdate.Code = code;
-            if (createdAt != null) customerToUpdate.CreatedAt = (DateTime) createdAt;
-            if (isBlocked != null) customerToUpdate.IsBlocked = (bool) isBlocked;
-            _customerRepository.Update(customerToUpdate);
-            return customerToUpdate;
+            var currUser = _userService.GetById(id);
+            if (first != null) currUser.FirstName = first;
+            if (last != null) currUser.LastName = last;
+            if (email != null) currUser.Email = email;
+            currUser.LastEdited = DateTime.Now;
+            _userService.Update(currUser);
+            return currUser;
         }
 
-        public Customer Delete(int id, [Service] ICustomerRepository _customerRepository)
+        public User DeleteUser(int id, [Service] IUser _userService)
         {
-            var customerToDelete = _customerRepository.GetById(id);
-            if (customerToDelete == null) throw new ArgumentException("Customer not found @ id", nameof(id));
-            _customerRepository.Delete(id);
-            return customerToDelete;
+            var userToDelete = _userService.GetById(id);
+            if (userToDelete == null) throw new ArgumentException($"User not found @ id:{id}");
+            _userService.Delete(id);
+            return userToDelete;
+        }
+        
+        //Post
+        public Post AddPost([Service] IPost _postService, string title, string? headerImage, string content, int userId)
+        {
+            var post = new Post
+            {
+                Title = title,
+                HeaderImage = headerImage,
+                Content = content,
+                CreatedDateTime = DateTime.Now,
+                UserId = userId
+            };
+            _postService.Add(post);
+            return post;
+        }
+
+        public Post UpdatePost([Service] IPost _postService, int id, string? title, string? headerImage, string? content)
+        {
+            var currPost = _postService.GetById(id);
+            if (title != null) currPost.Title = title;
+            if (content != null) currPost.Content = content;
+            if (headerImage != null) currPost.HeaderImage = headerImage;
+            _postService.Update(currPost);
+            return currPost;
+        }
+
+        public Post DeletePost(int id, [Service] IPost _postService)
+        {
+            var currPost = _postService.GetById(id);
+            if (currPost == null) throw new ArgumentException($"Post not found @ id:{id}");
+            _postService.Delete(id);
+            return currPost;
+        }
+        
+        //Comment
+        public Comment AddComment([Service] IComment _commentService, string message, int userId, int postId)
+        {
+            var comment = new Comment
+            {
+                Message = message,
+                UserId = userId,
+                PostId = postId,
+                CreatedDateTime = DateTime.Now
+            };
+            _commentService.Add(comment);
+            return comment;
+        }
+
+        public Comment UpdateComment([Service] IComment _commentService, int id, string? message)
+        {
+            var currComment = _commentService.GetById(id);
+            if (message != null) currComment.Message = message;
+            currComment.LastEdited = DateTime.Now;
+            _commentService.Update(currComment);
+            return currComment;
+        }
+
+        public Comment DeleteComment(int id, [Service] IComment _commentService)
+        {
+            var currComment = _commentService.GetById(id);
+            if (currComment == null) throw new ArgumentException($"Comment not found @ id:{id}");
+            _commentService.Delete(id);
+            return currComment;
         }
     }
 }

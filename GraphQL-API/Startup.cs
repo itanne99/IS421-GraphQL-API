@@ -1,5 +1,6 @@
 using GraphQL_API.Database;
 using GraphQL_API.GraphQL;
+using GraphQL_API.Models;
 using GraphQL_API.Services;
 using HotChocolate.AspNetCore;
 using HotChocolate.AspNetCore.Playground;
@@ -25,7 +26,9 @@ namespace GraphQL_API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IUser, UserService>();
+            services.AddScoped<IPost, PostService>();
+            services.AddScoped<IComment, CommentService>();
             services.AddDbContext<GraphQLDbContext>(context =>
             {
                 context.UseNpgsql(Configuration.GetConnectionString("ConnectionString"));
