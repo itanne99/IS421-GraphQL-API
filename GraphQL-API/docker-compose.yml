@@ -1,0 +1,12 @@
+﻿version: "3.9"
+
+services:
+  db:
+    container_name: "Postgres"
+    image: postgres
+    environment:
+      - POSTGRES_NAME=database
+      - POSTGRES_USER=idotanne
+      - POSTGRES_PASSWORD=password123
+    ports:
+      - '5432:5432'
