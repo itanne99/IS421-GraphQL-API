@@ -26,6 +26,7 @@ namespace GraphQL_API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
             services.AddScoped<IUser, UserService>();
             services.AddScoped<IPost, PostService>();
             services.AddScoped<IComment, CommentService>();
@@ -48,7 +49,6 @@ namespace GraphQL_API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, GraphQLDbContext dbContext)
         {
-            app.UseCors();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -58,6 +58,12 @@ namespace GraphQL_API
             dbContext.Database.EnsureCreated();
 
             app.UseRouting();
+            
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true));
+            
             app.UseEndpoints(endpoints => { endpoints.MapGraphQL("/api"); });
         }
     }
