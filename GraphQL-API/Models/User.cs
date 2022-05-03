@@ -17,6 +17,7 @@ namespace GraphQL_API.Models
     {
         protected override void Configure(IObjectTypeDescriptor<User> descriptor)
         {
+            descriptor.Authorize();
             base.Configure(descriptor);
         }
     }

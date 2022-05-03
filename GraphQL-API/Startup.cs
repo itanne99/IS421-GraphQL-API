@@ -1,3 +1,4 @@
+using System;
 using GraphQL_API.Database;
 using GraphQL_API.GraphQL;
 using GraphQL_API.Models;
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Okta.AspNetCore;
 
 namespace GraphQL_API
 {
@@ -48,16 +50,29 @@ namespace GraphQL_API
                 .AddType<UserType>()
                 .AddType<PostType>()
                 .AddType<CommentType>()
+                .AddAuthorization()
                 .AddQueryType<Query>()
                 .AddFiltering()
                 .AddSorting()
                 .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true)
                 .AddMutationType<Mutation>();
+            
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = OktaDefaults.ApiAuthenticationScheme;
+                    options.DefaultChallengeScheme = OktaDefaults.ApiAuthenticationScheme;
+                    options.DefaultSignInScheme = OktaDefaults.ApiAuthenticationScheme;
+                })
+                .AddOktaWebApi(new OktaWebApiOptions()
+                {
+                    OktaDomain = Configuration.GetValue<String>("OktaDomain")
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, GraphQLDbContext dbContext)
         {
+            app.UseAuthentication();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

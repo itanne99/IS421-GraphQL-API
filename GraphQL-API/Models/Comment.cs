@@ -23,6 +23,7 @@ namespace GraphQL_API.Models
     {
         protected override void Configure(IObjectTypeDescriptor<Comment> descriptor)
         {
+            descriptor.Authorize();
             base.Configure(descriptor);
         }
     }
