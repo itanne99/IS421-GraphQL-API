@@ -23,10 +23,19 @@ namespace GraphQL_API
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 
         public IConfiguration Configuration { get; }
+        private readonly string _policyName = "CorsPolicy";
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
+            services.AddCors(opt =>
+            {
+                opt.AddPolicy(name: _policyName, builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
             services.AddScoped<IUser, UserService>();
             services.AddScoped<IPost, PostService>();
             services.AddScoped<IComment, CommentService>();
@@ -59,10 +68,7 @@ namespace GraphQL_API
 
             app.UseRouting();
             
-            app.UseCors(x => x
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .SetIsOriginAllowed(origin => true));
+            app.UseCors(_policyName);
             
             app.UseEndpoints(endpoints => { endpoints.MapGraphQL("/api"); });
         }
