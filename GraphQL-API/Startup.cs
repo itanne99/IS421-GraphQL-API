@@ -35,6 +35,9 @@ namespace GraphQL_API
             });
 
             services.AddGraphQLServer()
+                .AddType<UserType>()
+                .AddType<PostType>()
+                .AddType<CommentType>()
                 .AddQueryType<Query>()
                 .AddFiltering()
                 .AddSorting()

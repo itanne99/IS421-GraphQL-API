@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using HotChocolate;
+using HotChocolate.Types;
 
 #nullable enable
 namespace GraphQL_API.Models
@@ -14,7 +16,14 @@ namespace GraphQL_API.Models
         public DateTime LastEdited { get; set; }
 
         public int UserId { get; set; }
-        [Required]
         public User User { get; set; }
+    }
+    
+    public class PostType : ObjectType<Post>
+    {
+        protected override void Configure(IObjectTypeDescriptor<Post> descriptor)
+        {
+            base.Configure(descriptor);
+        }
     }
 }

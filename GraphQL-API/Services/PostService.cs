@@ -32,7 +32,25 @@ namespace GraphQL_API.Services
 
         public IQueryable<Post> GetAll()
         {
-            return _dbContext.Posts.AsQueryable();
+            return _dbContext.Posts.Select(post => new Post
+            {
+                Title = post.Title,
+                Content = post.Content,
+                CreatedDateTime = post.CreatedDateTime,
+                HeaderImage = post.HeaderImage,
+                Id = post.Id,
+                LastEdited = post.LastEdited,
+                User = new User
+                {
+                    Email = post.User.Email,
+                    Id = post.User.Id,
+                    FirstName = post.User.FirstName,
+                    LastEdited = post.User.LastEdited,
+                    CreatedDateTime = post.User.CreatedDateTime,
+                    LastName = post.User.LastName
+                },
+                UserId = post.UserId
+            });
         }
 
         public Post GetById(int id)

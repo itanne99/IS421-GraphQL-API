@@ -33,7 +33,27 @@ namespace GraphQL_API.Services
 
         public IQueryable<Comment> GetAll()
         {
-            return _dbContext.Comments.AsQueryable();
+            return _dbContext.Comments.Select(comment => new Comment
+            {
+                Id = comment.Id,
+                Message = comment.Message,
+                Post = new Post
+                {
+                    Content = comment.Post.Content,
+                    Id = comment.Post.Id,
+                    Title = comment.Post.Title,
+                    User = comment.Post.User,
+                    HeaderImage = comment.Post.HeaderImage,
+                    LastEdited = comment.Post.LastEdited,
+                    UserId = comment.Post.UserId,
+                    CreatedDateTime = comment.Post.CreatedDateTime
+                },
+                User = comment.User,
+                LastEdited = comment.LastEdited,
+                PostId = comment.PostId,
+                UserId = comment.UserId,
+                CreatedDateTime = comment.CreatedDateTime
+            });
         }
 
         public Comment GetById(int id)
